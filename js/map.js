@@ -188,3 +188,45 @@ document.getElementById("toggle-panel").onclick =
 document.getElementById("reset").onclick = () => {
   if (confirm("進捗をリセットしますか？")) location.reload();
 };
+
+import QrScanner from 'https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner.min.js';
+
+const scanBtn = document.getElementById('scanBtn');
+const overlay = document.getElementById('scanOverlay');
+const videoElem = document.getElementById('scanVideo');
+const closeBtn = document.getElementById('closeScan');
+
+let scanner = null;
+
+scanBtn.addEventListener('click', async () => {
+  try {
+    // 背面カメラ指定（対応端末なら）でストリーム取得
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { exact: 'environment' } }
+    });
+    videoElem.srcObject = stream;
+    overlay.classList.remove('hidden');
+
+    // QrScanner インスタンス作成
+    scanner = new QrScanner(videoElem, result => {
+      console.log('QR 読み取り成功:', result);
+      stopScan();
+
+      // 例：クエリパラメータ形式の URL が QR に埋め込まれているならそのまま遷移
+      location.href = result;
+    });
+    scanner.start();
+  } catch (err) {
+    alert('カメラを起動できませんでした: ' + err);
+  }
+});
+
+function stopScan() {
+  if (!scanner) return;
+  scanner.stop();
+  videoElem.srcObject?.getTracks().forEach(t => t.stop());
+  scanner = null;
+  overlay.classList.add('hidden');
+}
+
+closeBtn.addEventListener('click', stopScan);
