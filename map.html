@@ -142,9 +142,52 @@
     </div>
     <div id="hint-list"></div>
   </div>
+  <!-- マップ画面の適当な場所に配置 -->
+  <button id="scanBtn" class="qr-btn">QRを読み取る</button>
 
+  <!-- フルスクリーンのオーバーレイ。初期状態は非表示 -->
+  <div id="scanOverlay" class="overlay hidden">
+    <video id="scanVideo" muted playsinline></video>
+    <button id="closeScan" class="close-btn">×</button>
+  </div>
+
+  <style>
+    /* ---- QR 読み取りボタン ---- */
+    .qr-btn {
+      position: fixed;
+      bottom: 1.5rem;
+      /* 画面下からの距離（お好みで調整） */
+      left: 50%;
+      /* 横中央に配置 */
+      transform: translateX(-50%);
+      z-index: 99;
+      /* マップ上で最前面に */
+
+      /* 見た目を大きめに */
+      padding: 1.2rem 2.4rem;
+      /* 余白を拡大 */
+      font-size: 1.25rem;
+      /* 文字サイズをアップ */
+      border-radius: 16px;
+      /* 角丸も少しだけ強調 */
+      background: var(--accent);
+      /* 既存のアクセント色を使用 */
+      color: #000;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: opacity .3s;
+    }
+
+    .qr-btn:hover {
+      opacity: .85;
+    }
+  </style>
+  
   <!-- Treasure‑hunt logic + Fantasy map custom in one file -->
   <script type="module" src="./js/map.js" defer></script>
+  
+  <script type="module" src="https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner.min.js"></script>
 
   <!-- Google Maps API (公開キーに置換) -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBy_Oh_oRHjntjRW-g48N-oEovSsqClREc&callback=initMap" defer></script>
