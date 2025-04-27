@@ -9,8 +9,9 @@
   <!-- 共通スタイル -->
   <link rel="stylesheet" href="./css/treasure-hunt.css" />
 
-  <!-- インラインで必要な最低限のマップ専用スタイル -->
+  <!-- インラインで必要な最低限のマップ＋QRボタン＋スキャナ用スタイル -->
   <style>
+    /* ------------- 全画面マップ ------------- */
     html,
     body {
       height: 100%;
@@ -22,7 +23,7 @@
       width: 100%
     }
 
-    /* ---- ヒント UI（元 map.html そのまま） ---- */
+    /* ---- ヒント用 FAB（変更無し） ---- */
     .fab {
       position: fixed;
       bottom: 1.5rem;
@@ -40,6 +41,7 @@
       color: #000
     }
 
+    /* ---- ヒントパネル（変更無し） ---- */
     .panel {
       position: fixed;
       bottom: 0;
@@ -115,7 +117,7 @@
       flex: 1
     }
 
-    /* ラベル共通クラス（文字の視認性） */
+    /* ---- キャンパスラベル（変更無し） ---- */
     .campus-label {
       position: absolute;
       white-space: nowrap;
@@ -124,6 +126,63 @@
       text-shadow: -2px -2px 0 #663, 2px -2px 0 #663, -2px 2px 0 #663, 2px 2px 0 #663;
       pointer-events: none;
       transform: translate(-50%, -50%)
+    }
+
+    /* ------------- QR 読み取りボタン ------------- */
+    .qr-btn {
+      position: fixed;
+      bottom: 1.5rem;
+      /* 画面下からの距離 */
+      left: 50%;
+      /* 横中央 */
+      transform: translateX(-50%);
+      z-index: 99;
+      /* 最前面 */
+      padding: 1.2rem 2.4rem;
+      /* やや大きめのタップ領域 */
+      font-size: 1.25rem;
+      border-radius: 16px;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: opacity .3s;
+    }
+
+    .qr-btn:hover {
+      opacity: .85
+    }
+
+    /* ------------- QR スキャナ用オーバーレイ ------------- */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100
+    }
+
+    .overlay.hidden {
+      display: none
+    }
+
+    #scanVideo {
+      width: 100%;
+      height: auto
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 2rem;
+      color: #fff;
+      background: none;
+      border: none;
+      cursor: pointer
     }
   </style>
 </head>
@@ -142,7 +201,8 @@
     </div>
     <div id="hint-list"></div>
   </div>
-  <!-- マップ画面の適当な場所に配置 -->
+
+  <!-- QR 読み取りボタン（中央下） -->
   <button id="scanBtn" class="qr-btn">QRを読み取る</button>
 
   <!-- フルスクリーンのオーバーレイ。初期状態は非表示 -->
@@ -151,46 +211,14 @@
     <button id="closeScan" class="close-btn">×</button>
   </div>
 
-  <style>
-    /* ---- QR 読み取りボタン ---- */
-    .qr-btn {
-      position: fixed;
-      bottom: 1.5rem;
-      /* 画面下からの距離（お好みで調整） */
-      left: 50%;
-      /* 横中央に配置 */
-      transform: translateX(-50%);
-      z-index: 99;
-      /* マップ上で最前面に */
-
-      /* 見た目を大きめに */
-      padding: 1.2rem 2.4rem;
-      /* 余白を拡大 */
-      font-size: 1.25rem;
-      /* 文字サイズをアップ */
-      border-radius: 16px;
-      /* 角丸も少しだけ強調 */
-      background: var(--accent);
-      /* 既存のアクセント色を使用 */
-      color: #000;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      transition: opacity .3s;
-    }
-
-    .qr-btn:hover {
-      opacity: .85;
-    }
-  </style>
-  
-  <!-- Treasure‑hunt logic + Fantasy map custom in one file -->
+  <!-- Treasure-hunt logic + Fantasy map -->
   <script type="module" src="./js/map.js" defer></script>
-  
-  <script type="module" src="https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner.min.js"></script>
+
+  <!-- ★重複読み込みを避けるため、qr-scanner の直読み込みは削除★ -->
 
   <!-- Google Maps API (公開キーに置換) -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBy_Oh_oRHjntjRW-g48N-oEovSsqClREc&callback=initMap" defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBy_Oh_oRHjntjRW-g48N-oEovSsqClREc&callback=initMap"
+    defer></script>
 </body>
 
 </html>
