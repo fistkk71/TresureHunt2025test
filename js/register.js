@@ -4,7 +4,7 @@ import {
   signInAnonymously
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
-  doc, setDoc, serverTimestamp
+  doc, setDoc, serverTimestamp, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* ---------- 年齢入力欄を人数に合わせて生成 ---------- */
@@ -30,8 +30,20 @@ updateAgeFields();
 /* ---------- フォーム送信 → Firestore 登録 ---------- */
 const regForm = document.getElementById("regForm");
 
-signInAnonymously(auth).then(() => {
+signInAnonymously(auth).then(async() => {
   const uid = auth.currentUser.uid;
+
+  /* ---------- ★ ゴール済みか確認 ---------- */
+  const teamRef  = doc(db, "teams", uid);
+  const teamSnap = await getDoc(teamRef);
+  if (teamSnap.exists() && teamSnap.data().elapsed) {
+  document.getElementById("regForm").outerHTML = `
+  <div class="card" style="text-align:center">
+  <h2>参加は完了しています</h2>
+  <p>この端末では既に宝探しをゴールしました。</p>
+  </div>`;
+  return;
+  }
 
   regForm.addEventListener("submit", async e => {
     e.preventDefault();
